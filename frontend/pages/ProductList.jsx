@@ -35,7 +35,7 @@ function ProductList() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 text-gray-800 mt-18">
+        <div className="min-h-screen bg-gray-100 text-gray-800 mt-20">
             <h1 className="text-3xl font-bold text-center py-6">Products List</h1>
             <div className="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.length > 0 ? (

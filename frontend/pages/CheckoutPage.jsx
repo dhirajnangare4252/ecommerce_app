@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../src/context/CartContext";
+import { authFetch } from "../src/utils/auth";
 
 function CheckoutPage() {
   const BASE_URL = import.meta.env.VITE_DJANGO_BASE_URL;
@@ -14,8 +15,8 @@ function CheckoutPage() {
     payment_method: "COD",
   });
 
-  const { loading, setLoading } = useState(false);
-  const { error, setError } = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
   const handleChange = (e) => {
@@ -27,29 +28,31 @@ function CheckoutPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/orders/create/`, {
+      const res = await authFetch(`${BASE_URL}/api/orders/create/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
       if (res.ok) {
         setSuccess("Order Placed Successfully!");
-        fetch(`${BASE_URL}/api/cart/`);
         clearCart();
         setTimeout(() => {
           navigate("/");
         }, 2000);
       } else {
-        setError(data.error || "Failed to place order");
+        setError(data.detail || data.error || "Failed to place order");
       }
     } catch (error) {
       setError("An error occurred while placing the order");
+      console.error("Checkout error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,10 +101,16 @@ function CheckoutPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 disabled:opacity-50"
           >
             {loading ? "Processing..." : "Place Order"}
           </button>
+
+          {error && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-center font-semibold">
+              {error}
+            </div>
+          )}
 
           {success && (
             <div className="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-center font-semibold">

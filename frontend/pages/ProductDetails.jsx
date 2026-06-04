@@ -37,6 +37,14 @@ function ProductDetails() {
         return <div className="text-center mt-10">Error: {error}</div>;
     }
 
+    const handleAddToCart = () => {
+        if(!localStorage.getItem('access_token')) {
+            window.location.href = '/login';
+            return;
+        }
+        addToCart(product.id);
+    }
+
     return (
         <div className="min-h-screen bg-gray-100 flex justify-center items-center py-10">
            <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-3xl">
@@ -50,7 +58,7 @@ function ProductDetails() {
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">{product.name}</h1>
                     <p className="text-gray-600  mb-4">{product.description}</p>
                     <p className="text-green-600 text-2xl mb-6 font-semibold ">${product.price}</p>
-                    <button onClick={()=> addToCart(product.id)} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">Add to Cart</button>
+                    <button onClick={handleAddToCart} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">Add to Cart</button>
                      <div className="mt-4">
                         <a href="/" className="text-blue-500 hover:underline">&larr; Back to Home</a>
                      </div>

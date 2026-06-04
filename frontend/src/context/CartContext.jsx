@@ -1,4 +1,5 @@
 import {createContext, useState, useContext,useEffect} from 'react';
+import {authFetch, getAccessToken} from '../utils/auth';
 
 const CartContext = createContext();
 
@@ -12,10 +13,7 @@ export const CartProvider = ({ children }) => {
     // fetch cart items from backend
     const fetchCart = async () => {
         try{
-            const res  =  await fetch(`${BASE_URL}/api/cart/`);
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
+            const res  =  await authFetch(`${BASE_URL}/api/cart/`);
             const data = await res.json();
             setCartItems(data.items || []);
             setTotal(data.total || 0);
@@ -33,7 +31,7 @@ export const CartProvider = ({ children }) => {
     // Add product to cart
     const addToCart = async (productId) => {
         try {
-            await fetch(`${BASE_URL}/api/cart/add/`, {
+            await authFetch(`${BASE_URL}/api/cart/add/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,7 +49,7 @@ export const CartProvider = ({ children }) => {
 
     const removeFromCart = async (itemId) => {
         try{
-            await fetch(`${BASE_URL}/api/cart/remove/`, {
+            await authFetch(`${BASE_URL}/api/cart/remove/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,7 +69,7 @@ export const CartProvider = ({ children }) => {
             return;
         }
         try {
-            await fetch(`${BASE_URL}/api/cart/update/`, {
+            await authFetch(`${BASE_URL}/api/cart/update/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
